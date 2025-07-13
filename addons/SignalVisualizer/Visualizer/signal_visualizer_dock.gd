@@ -40,10 +40,11 @@ func _on_generate_graph_button_pressed():
 	
 	var scene_signal_graph = SignalGraphUtility.create_signal_graph_from_node(get_tree().edited_scene_root, true)
 	SignalGraphUtility.generate_signal_graph_nodes(scene_signal_graph, graph, _on_open_signal_in_script)
-	SignalGraphUtility.generate_signal_graph_tree(scene_signal_graph, signal_tree)
+	# SignalGraphUtility.generate_signal_graph_tree(scene_signal_graph, signal_tree)
 	
 	if arrange_nodes_checkbox.button_pressed:
-		graph.arrange_nodes()
+		# graph.arrange_nodes()
+		graph.call_deferred("arrange_nodes")
 
 func _on_open_signal_in_script(data: SignalGraphNodeItem.Metadata):
 	open_script.emit(data.node_name, data.method_signature)

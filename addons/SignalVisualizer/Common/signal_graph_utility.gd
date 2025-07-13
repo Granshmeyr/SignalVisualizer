@@ -14,12 +14,12 @@ static func create_signal_graph(name: String, signals: Array, edges: Array) -> S
 	var signal_graph = SignalGraph.new(name)
 	
 	for signal_item in signals:
-		var new_signal_description = SignalDescription.new(signal_item.node_name, signal_item.signal_name)
+		var new_signal_description = SignalDescription.new(signal_item.node_name, signal_item.signal_name, signal_item.display_name)
 		new_signal_description._source_id = signal_item.id
 		signal_graph.signals.append(new_signal_description)
 		
 		for connection in edges:
-			var new_edge = SignalConnection.new(connection.signal_id, connection.source_node_name, connection.destination_node_name, connection.method_signature)
+			var new_edge = SignalConnection.new(connection.signal_id, connection.source_node_name, connection.destination_node_name, connection.method_signature, connection.display_name)
 			signal_graph.edges.append(new_edge)
 	
 	return signal_graph
@@ -44,13 +44,15 @@ static func create_signal_graph_from_node(root_node: Node, is_persistent_only: b
 						if filtered_signals.size() == 1:
 							signal_description = filtered_signals[0]
 						else:
-							signal_description = SignalDescription.new(node.name, signal_item.name)
+							signal_description = SignalDescription.new(node.name, signal_item.name, _get_display_name_from_node_path(node.get_path()))
 							existing_signals.append(signal_description)
 							signals.append(signal_description)
+
+						var connect_node: Node = connection["callable"].get_object()
 						
-						var signal_edge = SignalConnection.new(signal_description.id, signal_description.node_name, connection["callable"].get_object().name, connection["callable"].get_method())
+						var signal_edge = SignalConnection.new(signal_description.id, signal_description.node_name, connect_node.name, connection["callable"].get_method(), _get_display_name_from_node_path(connect_node.get_path()))
 						if not signal_graph.edges.any(func (element): return element.signal_id == signal_description.id):
-							edges.append(signal_edge)
+							edges.append(signal_edge) #
 	
 	var temp_signals = {}
 	for item in signals:
@@ -65,6 +67,33 @@ static func create_signal_graph_from_node(root_node: Node, is_persistent_only: b
 	
 	return signal_graph
 
+static func _get_display_name_from_node_path(node_path: String) -> String:
+	var split_path: Array = node_path.split("/")
+	var sliced_strings: Array = split_path.slice(-3, split_path.size())
+
+	var pop_indices: Array = []
+	for i: int in range(sliced_strings.size()):
+		var s: String = sliced_strings[i]
+
+		if "@" in s:
+			pop_indices.push_back(i)
+	pop_indices.sort()
+	pop_indices.reverse()
+	for i: int in pop_indices:
+		sliced_strings.pop_at(i)
+
+	var display_name: String = ""
+	for i: int in range(sliced_strings.size()):
+		var s: String = sliced_strings[i]
+
+		display_name += s
+
+		if not i == sliced_strings.size() - 1:
+			display_name += "/"
+
+	return display_name
+
+
 static func generate_signal_graph_nodes(signal_graph: SignalGraph, graph_node: GraphEdit, open_script_callable: Callable):
 	var graph_nodes: Dictionary = {}
 	
@@ -74,7 +103,7 @@ static func generate_signal_graph_nodes(signal_graph: SignalGraph, graph_node: G
 			current_graph_node = graph_nodes[signal_item.node_name]
 		if not current_graph_node:
 			current_graph_node = SignalGraphNode.instantiate()
-			current_graph_node.title = signal_item.node_name
+			current_graph_node.title = signal_item.display_name
 			current_graph_node.name = _get_graph_node_name(signal_item.node_name)
 			graph_node.add_child(current_graph_node)
 			graph_nodes[signal_item.node_name] = current_graph_node
@@ -85,7 +114,7 @@ static func generate_signal_graph_nodes(signal_graph: SignalGraph, graph_node: G
 			destination_graph_node = graph_nodes[edge.destination_node_name]
 		else:
 			destination_graph_node = SignalGraphNode.instantiate()
-			destination_graph_node.title = edge.destination_node_name
+			destination_graph_node.title = edge.display_name
 			destination_graph_node.name = _get_graph_node_name(edge.destination_node_name)
 			graph_node.add_child(destination_graph_node)
 			graph_nodes[edge.destination_node_name] = destination_graph_node

@@ -13,6 +13,7 @@ var id: int:
 	
 var node_name: String
 var signal_name: String
+var display_name: String
 
 var description: String :
 	get:
@@ -37,9 +38,10 @@ var _source_id = null
 # |===================================|
 # |===================================|
 
-func _init(node_name: String, signal_name: String):
+func _init(node_name: String, signal_name: String, display_name: String):
 	self.node_name = node_name
 	self.signal_name = signal_name
+	self.display_name = display_name
 
 # Signals
 # |===================================|

@@ -9,6 +9,7 @@ var signal_id: int
 var source_node_name: String
 var destination_node_name: String
 var method_signature: String
+var display_name: String
 
 var description: String :
 	get:
@@ -37,11 +38,12 @@ var dictionary_representation: Dictionary :
 # |===================================|
 # |===================================|
 
-func _init(signal_id: int, source_node_name: String, destination_node_name: String, method_signature: String):
+func _init(signal_id: int, source_node_name: String, destination_node_name: String, method_signature: String, display_name: String):
 	self.signal_id = signal_id
 	self.source_node_name = source_node_name
 	self.destination_node_name = destination_node_name
 	self.method_signature = method_signature
+	self.display_name = display_name
 
 # Signals
 # |===================================|
