@@ -1,3 +1,4 @@
+
 <p align="center">
     <img width=”400" src="./images/SignalVisualizerBanner.png" alt=Signal Visualizer Plugin Banner” />
 </p>
@@ -15,6 +16,8 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C0T61WG)
 
 A plugin for Godot 4.x. SignalVisualizer displays the current scene's signals and connections in a easy to read graph and tree dock.
+
+**NOTE:** My modifications remove the tree on the left, and change the graph item titles to include the connecting node's first two parents if available. Also, the arrange nodes call is now deferred which fixes the visual bugs.
 
 </center>
 
