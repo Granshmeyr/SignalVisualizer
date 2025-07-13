@@ -91,6 +91,9 @@ static func _get_display_name_from_node_path(node_path: String) -> String:
 		if not i == sliced_strings.size() - 1:
 			display_name += "/"
 
+			if i == sliced_strings.size() - 2:
+				display_name += "\n"
+
 	return display_name
 
 
